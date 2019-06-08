@@ -14,6 +14,9 @@ gen/%.pb.go: proto/%.proto gen
 $(DIRS):
 	mkdir $@
 
-.PHONY: clean
+.PHONY: clean test
 clean:
 	rm -rf $(DIRS)
+
+test:
+	go test ./src/...
