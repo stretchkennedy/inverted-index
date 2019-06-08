@@ -6,7 +6,7 @@ PROTOGENS := $(PROTOS:proto/%.proto=gen/%.pb.go)
 
 all: $(BINS)
 $(BINS): $(PROTOGENS) bin
-	go build -o bin/$@ cmd/$@/*.go
+	go build -o bin/$@ src/cmd/$@/*.go
 
 gen/%.pb.go: proto/%.proto gen
 	protoc -I proto --go_out=gen/ $<
