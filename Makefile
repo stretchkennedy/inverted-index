@@ -1,18 +1,19 @@
 BINS      := client server
+DIRS      := bin gen
 
 PROTOS    := $(wildcard proto/*.proto)
 PROTOGENS := $(PROTOS:proto/%.proto=gen/%.pb.go)
 
 all: $(BINS)
-$(BINS): $(PROTOGENS)
-	go build -o $@ cmd/$@/*.go
+$(BINS): $(PROTOGENS) bin
+	go build -o bin/$@ cmd/$@/*.go
 
 gen/%.pb.go: proto/%.proto gen
 	protoc -I proto --go_out=gen/ $<
 
-gen:
-	mkdir gen
+$(DIRS):
+	mkdir $@
 
 .PHONY: clean
 clean:
-	rm -rf $(BINS) gen
+	rm -rf $(DIRS)
