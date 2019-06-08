@@ -7,9 +7,12 @@ all: $(BINS)
 $(BINS): $(PROTOGENS)
 	go build -o $@ cmd/$@/*.go
 
-gen/%.pb.go: proto/%.proto
+gen/%.pb.go: proto/%.proto gen
 	protoc -I proto --go_out=gen/ $<
+
+gen:
+	mkdir gen
 
 .PHONY: clean
 clean:
-	rm -rf $(BINS) $(PROTOGENS)
+	rm -rf $(BINS) gen
