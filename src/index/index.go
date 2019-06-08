@@ -9,7 +9,7 @@ import (
 type fieldID uint8
 type docID uint32
 
-type location struct {
+type Location struct {
 	document docID
 	field fieldID
 	offset uint64
@@ -24,7 +24,7 @@ type Index struct {
 	docNameToID map[string]docID
 	biggestDocID docID
 
-	index map[string][]location
+	index map[string][]Location
 }
 
 func NewIndex() *Index {
@@ -35,14 +35,14 @@ func NewIndex() *Index {
 		docIDToName: map[docID]string{},
 		docNameToID: map[string]docID{},
 
-		index: map[string][]location{},
+		index: map[string][]Location{},
 	}
 }
 
-func (i *Index) Query(terms string) *[]location {
+func (i *Index) Query(phrase string) []Location {
 	// find unique stems
 	stems := map[string]struct{}{} // more efficient than a bool
-	scanner := newScanner(&terms)
+	scanner := newScanner(&phrase)
 	for scanner.Scan() {
 		stem, err := stemWord(scanner.Text())
 		if err != nil {
@@ -53,11 +53,11 @@ func (i *Index) Query(terms string) *[]location {
 		}
 	}
 	// perform query
-	locations := []location{}
+	locations := []Location{}
 	for stem, _ := range stems {
 		locations = append(locations, i.index[stem]...)
 	}
-	return &locations
+	return locations
 }
 
 func (i *Index) AddDocument(docName string, fields map[string]string) {
@@ -88,11 +88,19 @@ func (i *Index) indexWord(
 	if stem == "" {
 		return
 	}
-	i.index[stem] = append(i.index[stem], location{
+	i.index[stem] = append(i.index[stem], Location{
 		field: fID,
 		document: dID,
 		offset: offset,
 	})
+}
+
+func (i *Index) DocumentName(loc Location) string {
+	return i.docIDToName[loc.document]
+}
+
+func (i *Index) FieldName(loc Location) string {
+	return i.fieldIDToName[loc.field]
 }
 
 func (i *Index) getFieldID(name string) fieldID {
@@ -140,4 +148,8 @@ func stemWord(word string) (string, error) {
 		return "", nil
 	}
 	return snowball.Stem(lower, "english", false)
+}
+
+func (l Location) Offset() uint64 {
+	return l.offset
 }

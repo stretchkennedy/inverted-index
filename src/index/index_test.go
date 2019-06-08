@@ -55,14 +55,14 @@ func TestGetDocID(t *testing.T) {
 
 func TestAddDocument(t *testing.T) {
 	index := createTestIndex()
-	assert.Equal(t, []location{
+	assert.ElementsMatch(t, []Location{
 		{
 			document: docID(1),
 			field: fieldID(2),
 			offset: uint64(33),
 		},
 	}, index.index["question"])
-	assert.Equal(t, []location{
+	assert.ElementsMatch(t, []Location{
 		{
 			document: docID(1),
 			field: fieldID(2),
@@ -74,7 +74,7 @@ func TestAddDocument(t *testing.T) {
 			offset: uint64(142),
 		},
 	}, index.index["arrow"])
-	assert.Equal(t, []location{
+	assert.ElementsMatch(t, []Location{
 		{
 			document: docID(1),
 			field: fieldID(1),
@@ -85,8 +85,8 @@ func TestAddDocument(t *testing.T) {
 
 func TestQuery(t *testing.T) {
 	index := createTestIndex()
-	assert.Equal(t,
-		[]location{
+	assert.ElementsMatch(t,
+		[]Location{
 			{
 				document: docID(1),
 				field: fieldID(2),
@@ -103,6 +103,6 @@ func TestQuery(t *testing.T) {
 				offset: uint64(33),
 			},
 		},
-		*index.Query("arrow questions"),
+		index.Query("arrow questions"),
 	)
 }

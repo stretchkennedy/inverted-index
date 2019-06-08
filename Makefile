@@ -9,7 +9,7 @@ $(BINS): $(PROTOGENS) bin
 	go build -o bin/$@ src/cmd/$@/*.go
 
 gen/%.pb.go: proto/%.proto gen
-	protoc -I proto --go_out=gen/ $<
+	protoc -I proto --go_out=plugins=grpc:gen/ $<
 
 $(DIRS):
 	mkdir $@

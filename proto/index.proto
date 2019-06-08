@@ -1,13 +1,27 @@
 syntax = "proto3";
 
 message AddDocumentRequest {
-
+  string name = 1;
+  map<string, string> fields = 2;
 }
-
 message AddDocumentResponse {
 
 }
 
-service index {
+message QueryDocumentsRequest {
+  string phrase = 1;
+}
+message QueryDocumentsResponse {
+  message Field {
+    repeated uint64 offsets = 1;
+  }
+  message Document {
+    map<string, Field> fields = 1;
+  }
+  map<string, Document> documents = 1;
+}
+
+service Index {
   rpc AddDocument(AddDocumentRequest) returns (AddDocumentResponse) {}
+  rpc QueryDocuments(QueryDocumentsRequest) returns (QueryDocumentsResponse) {}
 }
