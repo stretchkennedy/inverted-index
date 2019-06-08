@@ -39,8 +39,25 @@ func NewIndex() *Index {
 	}
 }
 
-func (i *Index) Query(terms string) {
-
+func (i *Index) Query(terms string) *[]location {
+	// find unique stems
+	stems := map[string]struct{}{} // more efficient than a bool
+	scanner := newScanner(&terms)
+	for scanner.Scan() {
+		stem, err := stemWord(scanner.Text())
+		if err != nil {
+			panic(err)
+		}
+		if stem != "" {
+			stems[stem] = struct{}{}
+		}
+	}
+	// perform query
+	locations := []location{}
+	for stem, _ := range stems {
+		locations = append(locations, i.index[stem]...)
+	}
+	return &locations
 }
 
 func (i *Index) AddDocument(docName string, fields map[string]string) {
